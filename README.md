@@ -23,7 +23,7 @@ Personal dotfiles + UI setup for my **Surface Laptop 4 (AMD)** running **Hyprlan
 ---
 
 ## Background
-I originally started the Hub in AGS, but eventually switched over to Quickshell. The AGS config is still included as an early prototype, it’s lighter and works, just not as feature-complete. As for the widgets, I built my own Flutter calendar simply because none of the existing ones looked quite right to me.
+I originally started the Hub in AGS, but eventually switched over to Quickshell. The AGS config is still included as an early prototype, it’s lighter and works, just not as feature-complete. Also, I built my own Flutter calendar (full app) and now playing (widget) simply because none of the existing ones looked quite right to me.
 
 ---
 <div align="center">
@@ -90,7 +90,7 @@ This setup depends on (at least):
 - quickshell
 - ttf-manrope
 - hyprland-plugins
-- EverCal
+- [EverCal](https://github.com/snes19xx/EverCal)
 - sddm
 
 
