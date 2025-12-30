@@ -194,7 +194,7 @@ The hub window is an overlay (wlr-layershell) and is designed to get out of your
 
 ## Now Playing (Flutter)
 This is a separate Flutter desktop widget (class rules are handled in Hyprland).
-- Starts at 252x420, centered
+- Starts at 252x420
 - Hidden title bar
 - Resizable is disabled (setResizable(false) is used)
 - Esc closes the widget 
