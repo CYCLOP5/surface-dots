@@ -23,11 +23,7 @@ Personal dotfiles + UI setup for my **Surface Laptop 4 (AMD)** running **Hyprlan
 ---
 
 ## Background
-
-- I started the Hub in **AGS**, then switched to **quickshell** for more expressive animations.
-- The AGS config is an early version: it works and is lighter, but it doesn’t have all the features.
-- I built a **Flutter** calendar because none of the existing ones looked right to me.
-- I also built a **Flutter** now-playing widget after a Rofi-based version didn’t feel good.
+I originally started the Hub in AGS, but eventually switched over to Quickshell. The AGS config is still included as an early prototype, it’s lighter and works, just not as feature-complete. As for the widgets, I built my own Flutter calendar simply because none of the existing ones looked quite right to me.
 
 ---
 
