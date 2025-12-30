@@ -56,44 +56,53 @@ This is the structure I’m aiming for (some parts are “supporting configs”)
 - `media/` — wallpapers and screenshots.
 
 ---
+<table>
+<tr>
+<td valign="top">
 
-## Dependencies
+### Core & System
+* Hyprland
+* hypridle
+* hyprlock
+* xdg-desktop-portal-hyprland
+* xdg-desktop-portal-kde
+* polkit-gnome
+* sddm
+* networkmanager
+* bluez, blueman
 
-This setup depends on (at least):
+</td>
+<td valign="top">
 
-- Hyprland
-- hypridle
-- hyprlock
-- xdg-desktop-portal-hyprland
-- xdg-desktop-portal-kde
-- mako
-- blueman, bluez, bluez-utils
-- vdirsyncer
-- polkit-gnome
-- swww
-- waypaper
-- qt6ct
-- papirus-icon-theme
-- colorreload-gtk-module
-- kitty
-- thunar
-- firefox
-- rofi
-- xdg-utils
-- pamixer
-- playerctl
-- brightnessctl
-- grim, slurp, hyprland-contrib
-- swappy
-- networkmanager
-- khal
-- quickshell
-- ttf-manrope
-- hyprland-plugins
-- [EverCal](https://github.com/snes19xx/EverCal)
-- sddm
-- waypaper
+### UI & Theming
+* mako
+* swww
+* waypaper
+* rofi
+* kitty
+* thunar
+* firefox
+* qt6ct
+* papirus-icon-theme
+* ttf-manrope
 
+</td>
+<td valign="top">
+
+### Utilities
+* grim, slurp, swappy
+* pamixer
+* playerctl
+* brightnessctl
+* quickshell
+* vdirsyncer
+* khal
+* [EverCal](https://github.com/snes19xx/EverCal)
+* xdg-utils
+
+</td>
+</tr>
+</table>
 
 ---
 
