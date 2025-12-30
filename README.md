@@ -29,7 +29,7 @@ I originally started the Hub in AGS, but eventually switched over to Quickshell.
 <div align="center">
   <img src="media/screenshots/ss1.png" width="45%" />
   <img src="media/screenshots/ss2.png" width="45%" />
-  <p><i>SDDM: Lock Screen & Login Screen</i></p>
+  <p><i>SDDM: Lock Screen & Login Screen (hyprlock also looks just like this + with media information if playing when locked)</i></p>
   
   <br/>
 
