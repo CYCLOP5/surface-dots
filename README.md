@@ -37,7 +37,7 @@ ss7
   <br/>
 
   <img src="media/screenshots/ss8.png" width="45%" />
-  <img src="media/screenshots/ss7.png" width="45%" />
+  <img src="media/screenshots/ss9.png" width="45%" />
   <p><i>Firefox Custom Start Page + EverCal Light mode</i></p>
 </div>
 
