@@ -46,7 +46,7 @@ I originally started the Hub in AGS, but eventually switched over to Quickshell.
 ## What’s in this repo
 This is the structure I’m aiming for (some parts are “supporting configs”):
 - `.config/`
-- `hypr/` — Hyprland configuration.
+- `hypr/` — Hyprland configuration (updated for v 0.53).
 - `quickshell/` — main hub UI.
 - `ags/` — early, lighter hub prototype.
 - `rofi/`, `mako/`, `khal/`, `kitty/`, `gtk-3.0/`, `vdirsyncer/` — supporting configs.
