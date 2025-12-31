@@ -111,7 +111,9 @@ This is the structure I’m aiming for (some parts are “supporting configs”)
 ## Hyprland
 
 Main config: `~/.config/hypr/hyprland.conf`
-### Keybindings
+uodated config for v0.53: `~/.config/hypr/hyprland_v053.conf`
+
+### Keybindings (for main conf will update for newer one soon)
 
 #### Apps
 - `SUPER + Q` → terminal (`kitty`)
