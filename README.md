@@ -37,7 +37,7 @@ ss7
   <br/>
 
   <img src="media/screenshots/ss8.png" width="45%" />
-  <img src="media/screenshots/ss9.png" width="45%" />
+  <img src="media/screenshots/ss7.png" width="45%" />
   <p><i>Firefox Custom Start Page + EverCal Light mode</i></p>
 </div>
 
@@ -64,8 +64,11 @@ This is the structure I’m aiming for (some parts are “supporting configs”)
 * Hyprland
 * hypridle
 * hyprlock
+* hyprland-plugins
+* xdg-utils
 * xdg-desktop-portal-hyprland
 * xdg-desktop-portal-kde
+* xdg-desktop-portal-gtk
 * polkit-gnome
 * sddm
 * networkmanager
@@ -80,18 +83,21 @@ This is the structure I’m aiming for (some parts are “supporting configs”)
 * waypaper
 * rofi
 * kitty
-* thunar
 * firefox
+* colorreload-gtk-module
+* Everforest-Dark-theme
+* EVerforest-Light-theme
 * qt6ct
 * papirus-icon-theme
 * ttf-manrope
+* ttf-nerd-fonts-symbols
 
 </td>
 <td valign="top">
 
 ### Utilities
-* grim, slurp, swappy
-* pamixer
+* grim, slurp, swappy, grimblast
+* pamixer, pipewire-pulse or pulseaudio
 * playerctl
 * brightnessctl
 * quickshell
@@ -99,6 +105,9 @@ This is the structure I’m aiming for (some parts are “supporting configs”)
 * khal
 * [EverCal](https://github.com/snes19xx/EverCal)
 * xdg-utils
+* curl, jq
+* flutter, dart
+* linux-surface tools (Linux-surface only)
 
 </td>
 </tr>
@@ -326,3 +335,4 @@ sudo surface profile set <mode>
 - luci_light.jpg: https://www.amazon.ca/Art-Fire-Emblem-Awakening-ebook/dp/B01J1XIC2O
 - Final Fantasy X logo: by [Yoshitaka Amano](https://en.yoshitaka-amano.com/#/)
 - All Rofi pictures were pulled from Pinterest; I don’t know the original owners.
+
