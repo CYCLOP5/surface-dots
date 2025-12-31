@@ -45,7 +45,7 @@ ss7
 This is the structure I’m aiming for (some parts are “supporting configs”):
 - `.config/`
 - `hypr/` — Hyprland configuration (updated for v 0.53).
-- `quickshell/` — main hub UI.
+- `quickshell/` — main hub UI + the Bar.
 - `ags/` — early, lighter hub prototype.
 - `rofi/`, `mako/`, `khal/`, `kitty/`, `gtk-3.0/`, `vdirsyncer/` — supporting configs.
 - `firefox/` — custom new-tab setup.
