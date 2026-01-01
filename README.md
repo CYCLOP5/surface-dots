@@ -1,6 +1,7 @@
 # surface-dots
 
-Personal dotfiles + UI setup for my **Surface Laptop 4 (AMD)** running **Hyprland**. 
+Personal dotfiles + UI setup for my **Surface Laptop 4 (AMD)** running **Hyprland**.
+ 
 ---
 
 ## Table of contents
