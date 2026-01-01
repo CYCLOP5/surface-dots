@@ -185,13 +185,18 @@ bash ~/config/quickshell/snes-hub/bar/theme-mode.sh dark|light
 Clicking a workspace pill runs: `- hyprctl dispatch workspace <id>`
 
 ### Updates
-Updates are polled with:
+Updates are shown using a poller, but it won’t run checkupdates while pacman is busy (to avoid lock-related crashes). When the pacman lock file exists, the bar displays the last cached update count instead. Polled with:
 ``` bash
-checkupdates 2>/dev/null | wc -l
+if [ -e /var/lib/pacman/db.lck ]; then
+  cat /tmp/qs_updates_count 2>/dev/null || echo 0
+else
+  checkupdates 2>/dev/null | wc -l | tee /tmp/qs_updates_count
+fi
+
 ```
-and clicking it simnply runs
+Clicking the updates pill runs:
 ``` bash
-kitty -e sudo pacman -Syu
+kitty -e bash -lc "sudo pacman -Syu"
 ```
 
 ### Date and Clock
