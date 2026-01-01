@@ -168,37 +168,6 @@ OLd Config at `~/.config/hypr/hyprland_OLD.conf`
 - `SUPER + SHIFT + Print` → mode `sf`
 - `SUPER + O` → mode `m`
 
-### Window rules
-
-There are targeted rules for:
-
-- `kitty` (float + size `500x300` + rounding `10` + opacity `0.9`)
-- `blueman-manager` (float + size `500x300` + rounding + opacity)
-- `nm-connection-editor` (float + size `500x600` + rounding + opacity + border color)
-- `com.snes.evercal` (float + size `900x600` + rounding `20`)
-
-- Portals + auth prompts are tagged `portal-ui` (gtk/kde/hyprland portals, polkit agents, pinentry, ssh-askpass)
-  - then enforced as: float + center + rounding `10` + size `1100x750` + dim_around + opacity `0.95`
-
-- `thunar`:
-  - always opacity `0.9`
-  - if floating: size `900x600` + center
-
-- Generic floating dialogs:
-  - modal windows: float + center + rounding `10`
-  - common titles (Open File / Save As / Rename / etc.) forced to float + center
-  - some titles get sizing rules + dim_around rules
-
-- Visual rule for ALL floating windows:
-  - `border_color rgb(87b158)`
-
-- `org.gnome.FileRoller` (float + size `500x350` + rounding + border color)
-- `com.snes.nowplaying` widget (float + pinned + border + animation + fixed position + opacity)
-
-### Layer rules 
-- `rofi` namespace: ignore_alpha `0.9` + slide-left animation + dim_around
-- `quickshell` namespace: slide-top animation + dim_around
-
 ---
 
 ## Quickshell Bar 
