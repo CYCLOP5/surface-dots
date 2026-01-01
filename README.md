@@ -301,9 +301,9 @@ khal list now 7d
 - Contracted by default when the media player card is active, but can be expanded via the expand button.
   
 ## Pixel sddm theme
-- Required:
+- Required (I recommend installing `qt5-graphicaleffects qt5-quickcontrols2 qt5-svg` too if it keeps giving error):
 ```bash
-sudo pacman -S git qt5-graphicaleffects qt5-quickcontrols2 qt5-svg
+sudo pacman -S qt6-5compat qt6-svg qqc2-desktop-style inter-font ttf-nerd-fonts-symbols
 ```
 - To install:
   - move the contents of sddm folder to `/usr/share/sddm/themes/` (create the dir if it doesn't exist yet)
