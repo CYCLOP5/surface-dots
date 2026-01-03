@@ -13,6 +13,7 @@ I originally started the Hub in AGS, but eventually switched over to Quickshell.
 - [Quickshell Bar](#quickshell-bar) 
 - [Quickshell Hub (`snes-hub`)](#quickshell-hub-snes-hub)
 - [Google Calendar sync (vdirsyncer + khal)](#google-calendar-sync-vdirsyncer--khal)
+- [Power menu](#power-menu)
 - [Pixel sddm theme](#pixel-sddm-theme)
 - [Firefox custom new-tab](#firefox-custom-new-tab)
 - [Surface-only features](#surface-only-features)
@@ -122,6 +123,7 @@ OLd Config at `~/.config/hypr/hyprland_OLD.conf`
 - `SUPER + DOWN` → togglesplit
 
 #### Exit
+- `ALT + F4` → Power menu
 - `SUPER + ALT + F4` → exit Hyprland
 
 #### Focus (arrow keys)
@@ -201,7 +203,7 @@ kitty -e bash -lc "sudo pacman -Syu"
 - Screenshot button (runs the capture script and then closes the hub).
 - Power button
 
-#### Power menu
+#### Power options
 - Compact power grid that expands (click the power button or press `p` key) *inside the header* (no extra window):
 - Keyboard navigation: **Arrow keys / Tab** to move, **Enter** to trigger, **Esc** to close.
 
@@ -274,6 +276,18 @@ khal list now 7d
 - Uses **mako** (`makoctl`) as the notification backend.
 - Contracted by default when the media player card is active, but can be expanded via the expand button.
   
+## Power menu
+
+<p align="center">
+  <img src="media/screenshots/powermenu.png" width="300" alt="Quickshell Power Menu screenshot" />
+</p>
+
+ wlr-layershell power menu overlay (separate from the hub header menu). Toggled with ALT+F4
+**Run**
+```bash
+quickshell -p ~/.config/quickshell/snes-hub/bar/PowerMenu.qml
+```
+
 ## Pixel sddm theme
 - Required (I recommend installing `qt5-graphicaleffects qt5-quickcontrols2 qt5-svg` too if it keeps giving error):
 ```bash
