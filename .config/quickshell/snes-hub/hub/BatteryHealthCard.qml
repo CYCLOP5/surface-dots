@@ -94,7 +94,7 @@ Lib.Card {
 
     ColumnLayout {
         id: contentLayout
-        spacing: 10
+        spacing: 8
         Layout.fillWidth: true
         z: 1
 
@@ -106,7 +106,7 @@ Lib.Card {
                 text: "Battery Health  "
                 color: root.textPrimary
                 font.family: Theme.textFont
-                font.pixelSize: 14
+                font.pixelSize: 10
                 font.weight: Font.DemiBold  
             }
             
@@ -128,14 +128,14 @@ Lib.Card {
         }
 
         ColumnLayout {
-            spacing: 6
+            spacing: 4
             Layout.fillWidth: true
 
             RowLayout {
                 Layout.fillWidth: true
 
                 Text {
-                    text: Math.round(root.healthPercent) + "% health"
+                    text: Math.round(root.healthPercent) + "% capacity"
                     color: root.textPrimary
                     font.family: Theme.textFont
                     font.pixelSize: 12
@@ -149,25 +149,20 @@ Lib.Card {
                     font.pixelSize: 10
                 }
             }
-            // Health Bar Section
+            // Health Bar 
             Rectangle {
                 id: barTrack
                 Layout.fillWidth: true
-                height: 10
-                radius: 6
+                height: 7
+                radius: 4
                 color: themed ? root.theme.bgItem : Theme.bgItem
 
                 Rectangle {
                     id: barFill
                     height: parent.height
                     radius: parent.radius
-                    width: Math.max(6, parent.width * (root.healthPercent / 100))
-
-                    gradient: Gradient {
-                        GradientStop { position: 0.0; color: root.accent }
-                        GradientStop { position: 1.0; color: root.accentAlt }
-                    }
-
+                    width: Math.max(4, parent.width * (root.healthPercent / 100))
+                    color: root.accentAlt
                     Behavior on width { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
                 }
             }
@@ -175,66 +170,84 @@ Lib.Card {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: 12
+            spacing: 16
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 2
+                Layout.preferredWidth: 1
+                spacing: 1
 
                 Text {
                     text: "Cycles"
                     color: root.textSecondary
                     font.family: Theme.textFont
-                    font.pixelSize: 10
+                    font.pixelSize: 9
+                    opacity: 0.8
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
                 }
 
                 Text {
                     text: root.cyclesText
                     color: root.textPrimary
                     font.family: Theme.textFont
-                    font.pixelSize: 12
+                    font.pixelSize: 13
+                    font.weight: Font.Medium
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
                 }
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 2
+                Layout.preferredWidth: 2
+                spacing: 1
 
                 Text {
                     text: "Energy (full / design)"
                     color: root.textSecondary
                     font.family: Theme.textFont
-                    font.pixelSize: 10
+                    font.pixelSize: 9
+                    opacity: 0.8
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
                 }
 
                 Text {
                     text: root.energyText
                     color: root.textPrimary
                     font.family: Theme.textFont
-                    font.pixelSize: 12
+                    font.pixelSize: 10
+                    font.weight: Font.Medium
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
                 }
             }
-        }
 
-        // Time Remaining Row
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
-
-            Text {
-                text: "Time remaining"
-                color: root.textSecondary
-                font.family: Theme.textFont
-                font.pixelSize: 12
-            }
-
-            Text {
-                text: root.timeText
-                color: root.textPrimary
-                font.family: Theme.textFont
-                font.pixelSize: 10
+            ColumnLayout {
                 Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
+                Layout.preferredWidth: 1.5
+                spacing: 1
+
+                Text {
+                    text: "Time remaining"
+                    color: root.textSecondary
+                    font.family: Theme.textFont
+                    font.pixelSize: 9
+                    opacity: 0.8
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text: root.timeText
+                    color: root.textPrimary
+                    font.family: Theme.textFont
+                    font.pixelSize: 10
+                    font.weight: Font.Medium
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                }
             }
         }
     }

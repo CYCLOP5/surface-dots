@@ -129,7 +129,7 @@ Lib.Card {
     var s = root.localPerfState
     if (s.includes("low")) return "Saver"
     if (s === "balanced") return "Normal"
-    if (s.includes("balanced-performance")) return "Optim."
+    if (s.includes("balanced-performance")) return "Optimized"
     if (s.includes("performance")) return "Perf"
     return "Normal"
   }
@@ -182,7 +182,7 @@ Lib.Card {
         onRightClicked: {
             root.closeRequested()
             // det("nm-connection-editor >/dev/null 2>&1 &")
-            det("/home/snes/.config/rofi/wifi/wifi.sh")
+            det("quickshell -p ~/.config/quickshell/snes-hub/lib/WifiMenu.qml")
         }
         fixX: -10
       }

@@ -14,6 +14,7 @@ I originally started the Hub in AGS, but eventually switched over to Quickshell.
 - [Quickshell Hub (`snes-hub`)](#quickshell-hub-snes-hub)
 - [Google Calendar sync (vdirsyncer + khal)](#google-calendar-sync-vdirsyncer--khal)
 - [Power menu](#power-menu)
+- [Wifi menu](#wifi-menu)
 - [Pixel sddm theme](#pixel-sddm-theme)
 - [Firefox custom new-tab](#firefox-custom-new-tab)
 - [Surface-only features](#surface-only-features)
@@ -287,6 +288,10 @@ khal list now 7d
 ```bash
 quickshell -p ~/.config/quickshell/snes-hub/bar/PowerMenu.qml
 ```
+## Wifi menu
+Standalone network manager applet located at lib/WifiMenu.qml. With both (light/dark) theme.
+- Trigger: Right-click the Wi-Fi button in the Hub.
+- or run: `quickshell -p ~/.config/quickshell/snes-hub/lib/Wifimenu.qml`
 
 ## Pixel sddm theme
 - Required (I recommend installing `qt5-graphicaleffects qt5-quickcontrols2 qt5-svg` too if it keeps giving error):
