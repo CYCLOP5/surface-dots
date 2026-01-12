@@ -2,23 +2,22 @@
 # ~/.config/quickshell/snes-hub/lib/weather.sh
 
 # OpenWeatherMap API Configuration
-API_KEY="USE YOUR API KEY HERE"
-# TORONTO, ON
-LAT="43.66188728600653"   
-LON="-79.3953774082033"
+API_KEY="YOUR WEATHER API"
+LAT="LATITUDE"   
+LON="LONGITUDE"
 
 # Cache Configuration
-CACHE_FILE="$HOME/.config/quickshell/.cache/ags-weather.json"
+CACHE_FILE="$HOME/.config/quickshell/.cache/weather.json"
 CACHE_DURATION=1800  # 30 minutes (1800 seconds)
 
 # Create cache dir if it doesn't exist
 mkdir -p "$(dirname "$CACHE_FILE")"
 
-# Function to map OpenWeatherMap condition ID to icon
+# FMap OpenWeatherMap condition ID to icon
 get_icon() {
     local id=$1
     
-    # Day/Night Check (Approximate: Night is before 6AM or after 6PM)
+    # Day/Night Check
     local current_hour=$(date +%H)
     local is_night=0
     if [ "$current_hour" -lt 6 ] || [ "$current_hour" -ge 18 ]; then
@@ -28,40 +27,40 @@ get_icon() {
     case $id in
         # --- Clear Sky ---
         800) 
-            if [ "$is_night" -eq 1 ]; then echo "🌙"; else echo "☀"; fi 
+            if [ "$is_night" -eq 1 ]; then echo "󰽥"; else echo "☀"; fi 
             ;;
 
         # --- Few Clouds (11-25%) ---
         801) 
-            if [ "$is_night" -eq 1 ]; then echo "☁"; else echo "🌤"; fi 
+            if [ "$is_night" -eq 1 ]; then echo "☁️"; else echo ""; fi 
             ;;
 
         # --- Clouds (Scattered, Broken, Overcast) ---
-        802|803|804) echo "☁" ;;      
+        802|803|804) echo "" ;;      
 
         # --- Drizzle ---
-        300|301|302|310|311|312|313|314|321) echo "🌧" ;;  
+        300|301|302|310|311|312|313|314|321) echo "" ;;  
 
         # --- Rain ---
-        500|501|502|503|504) echo "🌧" ;;  
+        500|501|502|503|504) echo "" ;;  
         
         # --- Freezing Rain ---
-        511) echo "" ;;              
+        511) echo "" ;;              
         
         # --- Shower Rain ---
         520|521|522|531) echo "🌧" ;;  
 
         # --- Thunderstorm ---
-        200|201|202|210|211|212|221|230|231|232) echo "⛈" ;;  
+        200|201|202|210|211|212|221|230|231|232) echo "" ;;  
 
         # --- Snow ---
         600|601|602|611|612|613|615|616|620|621|622) echo "❄" ;;  
 
         # --- Atmosphere (Mist, Smoke, Haze, Dust, Fog) ---
-        701|711|721|731|741|751|761|771) echo "🌫" ;;  
+        701|711|721|731|741|751|761|771) echo "" ;;  
         
         # --- Special Atmosphere ---
-        762) echo "🌋" ;; # Volcanic Ash
+        762) echo "🌋" ;; # Volcanic Ash!!!!
         781) echo "🌪" ;; # Tornado
 
         # --- Default ---
@@ -69,7 +68,7 @@ get_icon() {
     esac
 }
 
-# Function to fetch weather from OpenWeatherMap
+# Fetch weather from OpenWeatherMap
 fetch_weather() {
     local url="https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=metric&appid=${API_KEY}"
     
@@ -78,7 +77,7 @@ fetch_weather() {
     
     if [ $? -eq 0 ] && [ -n "$response" ]; then
         # Parse the response
-        local temp=$(echo "$response" | jq -r '.main.temp // 0' | awk '{printf "%.0f", $1}')
+        local temp=$(echo "$response" | jq -r '.main.temp // 0' | awk '{t=sprintf("%.0f",$1); print (t=="-0"?"0":t)}')
         local desc=$(echo "$response" | jq -r '.weather[0].description // "Unknown"')
         local weather_id=$(echo "$response" | jq -r '.weather[0].id // 800')
         local icon=$(get_icon "$weather_id")
@@ -92,7 +91,7 @@ fetch_weather() {
         echo "$output" > "$CACHE_FILE"
         echo "$output"
     else
-        # Return cached data if fetch fails (fallback)
+        # Return cached data if fetch fails
         if [ -f "$CACHE_FILE" ]; then
             cat "$CACHE_FILE"
         else

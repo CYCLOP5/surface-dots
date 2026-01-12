@@ -93,9 +93,9 @@ Lib.Card {
 
           Text {
             text: weather.value ? weather.value.icon : "☁"
-            font.family: Theme.iconFont
-            font.pixelSize: 10
-            color: ((root.theme && root.theme.accentBlue !== undefined) ? root.theme.accentBlue : Theme.accentBlue)
+            font.family: "Noto Emoji"
+            font.pixelSize: 12
+            color: (root.theme && root.theme.isDarkMode) ? Theme.weatherd : Theme.weatherl
           }
 
           Text {
