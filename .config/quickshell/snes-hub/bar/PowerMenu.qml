@@ -90,62 +90,64 @@ PanelWindow {
         width: 400
         height: 300
         
-        anchors.centerIn: parent
+        // To prevent fractional blur
+        x: Math.round((parent.width - width) / 2)
+        y: Math.round(((parent.height - height) / 2) + ((1 - Math.min(1, intro)) * 60))
+        
         focus: true
 
         // Entry animation progress
         property real intro: 0
         property real introBlur: 18
 
-    SequentialAnimation {
-        running: true
+        SequentialAnimation {
+            running: true
 
-        ParallelAnimation {
+            ParallelAnimation {
+                // Main intro: fade/slide/scale driver
+                PropertyAnimation {
+                    target: root
+                    property: "intro"
+                    from: 0
+                    to: 1
+                    duration: 260
+                    easing.type: Easing.OutExpo
+                }
 
-            // Main intro: fade/slide/scale driver
+                // Blur clears as it comes in
+                PropertyAnimation {
+                    target: root
+                    property: "introBlur"
+                    from: 18
+                    to: 0
+                    duration: 260
+                    easing.type: Easing.OutCubic
+                }
+            }
+
             PropertyAnimation {
                 target: root
                 property: "intro"
-                from: 0
-                to: 1
-                duration: 260
-                easing.type: Easing.OutExpo
+                from: 1
+                to: 1.06
+                duration: 90
+                easing.type: Easing.OutQuad
             }
-
-            // Blur clears as it comes in
             PropertyAnimation {
                 target: root
-                property: "introBlur"
-                from: 18
-                to: 0
-                duration: 260
+                property: "intro"
+                from: 1.06
+                to: 1
+                duration: 140
                 easing.type: Easing.OutCubic
             }
+
+            ScriptAction { script: root.forceActiveFocus() }
         }
 
-        PropertyAnimation {
-            target: root
-            property: "intro"
-            from: 1
-            to: 1.06
-            duration: 90
-            easing.type: Easing.OutQuad
-        }
-        PropertyAnimation {
-            target: root
-            property: "intro"
-            from: 1.06
-            to: 1
-            duration: 140
-            easing.type: Easing.OutCubic
-        }
-
-    ScriptAction { script: root.forceActiveFocus() }
-}
-    // Still entry animation
-    opacity: Math.min(1, intro)
-    scale: 0.88 + (0.12 * Math.min(1, intro))
-    y: Math.round((1 - Math.min(1, intro)) * 60)
+        // Apply opacity/scale based on intro
+        opacity: Math.min(1, intro)
+        scale: 0.88 + (0.12 * Math.min(1, intro))
 
         Keys.enabled: true
         Keys.priority: Keys.BeforeItem
@@ -157,7 +159,7 @@ PanelWindow {
         }
 
         property int currentIndex: 0
-        property int confirmIndex: 1 // 0 = No, 1 = Yes
+        property int confirmIndex: 1 
         property string pendingCmd: ""
         property string pendingLabel: ""
 
@@ -265,8 +267,15 @@ PanelWindow {
             Qt.quit()
         }
 
-        Rectangle { id: bgMask; anchors.fill: parent; radius: 20; visible: false }
+        // Mask Shape
+        Rectangle {
+            id: bgMask
+            anchors.fill: parent
+            radius: 20
+            visible: false
+        }
 
+        // Bottom Layer (Background + Image)
         Item {
             anchors.fill: parent
             layer.enabled: true
@@ -275,19 +284,9 @@ PanelWindow {
             Rectangle {
                 anchors.fill: parent
                 color: theme.card
-                
-
-                // so that clicking inside won't close
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: false
-                    onPressed: (mouse) => mouse.accepted = true
-                    onClicked: (mouse) => mouse.accepted = true
-                }
             }
 
             Image {
-                id: headerImg
                 width: parent.width
                 height: 150
                 anchors.top: parent.top
@@ -295,20 +294,24 @@ PanelWindow {
                 fillMode: Image.PreserveAspectCrop
                 smooth: true
             }
-            Rectangle {
+        }
+
+        // Middle Layer: Content
+        Item {
+            anchors.fill: parent
+            z: 1 
+
+            // Prevent click-through
+            MouseArea {
                 anchors.fill: parent
-                radius: bgMask.radius
-                color: "transparent"
-                border.width: 1
-                border.color: win.isDarkMode ? '#d1a8c080' : '#435133'
-                antialiasing: true
-                z: 999
-                enabled: false
+                hoverEnabled: false
+                onPressed: (mouse) => mouse.accepted = true
+                onClicked: (mouse) => mouse.accepted = true
             }
 
             ColumnLayout {
-                anchors.top: headerImg.bottom
-                anchors.topMargin: 8
+                anchors.top: parent.top
+                anchors.topMargin: 158 // 150 (Image) + 8 (padding)
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 2
 
@@ -334,7 +337,7 @@ PanelWindow {
                 Text { id: userName; visible: false; text: "User" }
             }
 
-            // Fade between modes (icons <-> confirm)
+            // Mode 1: Icons
             Item {
                 anchors.fill: parent
                 opacity: root.pendingCmd === "" ? 1 : 0
@@ -349,7 +352,6 @@ PanelWindow {
 
                     Repeater {
                         model: root.buttonsModel
-
                         Rectangle {
                             Layout.preferredWidth: 65
                             Layout.preferredHeight: 70
@@ -371,7 +373,6 @@ PanelWindow {
                             ColumnLayout {
                                 anchors.centerIn: parent
                                 spacing: 4
-
                                 Text {
                                     text: modelData.icon
                                     font.family: "JetBrainsMono NF"
@@ -379,7 +380,6 @@ PanelWindow {
                                     color: (parent.parent.isActive || parent.parent.isHovered) ? theme.activeText : theme.text
                                     Layout.alignment: Qt.AlignHCenter
                                 }
-
                                 Text {
                                     text: modelData.label
                                     font.family: "Inter"
@@ -389,7 +389,6 @@ PanelWindow {
                                     Layout.alignment: Qt.AlignHCenter
                                 }
                             }
-
                             HoverHandler { id: hoverHandler; cursorShape: Qt.PointingHandCursor }
                             TapHandler {
                                 onTapped: {
@@ -402,6 +401,7 @@ PanelWindow {
                 }
             }
 
+            // Mode 2: Confirmation
             Item {
                 anchors.fill: parent
                 opacity: root.pendingCmd !== "" ? 1 : 0
@@ -425,17 +425,14 @@ PanelWindow {
 
                     RowLayout {
                         spacing: 15
-
                         Rectangle {
                             Layout.preferredWidth: 100
                             Layout.preferredHeight: 40
                             radius: 10
                             property bool isHovered: cancelHover.hovered
-
                             color: (root.confirmIndex === 0 || isHovered) ? theme.tileHover : theme.tile
                             border.width: 1
                             border.color: (root.confirmIndex === 0 || isHovered) ? theme.text : "transparent"
-
                             Text {
                                 anchors.centerIn: parent
                                 text: "No"
@@ -443,7 +440,6 @@ PanelWindow {
                                 font.weight: 600
                                 color: theme.text
                             }
-
                             HoverHandler { id: cancelHover; cursorShape: Qt.PointingHandCursor }
                             TapHandler {
                                 onTapped: {
@@ -453,17 +449,14 @@ PanelWindow {
                                 }
                             }
                         }
-
                         Rectangle {
                             Layout.preferredWidth: 100
                             Layout.preferredHeight: 40
                             radius: 10
                             property bool isHovered: confirmHover.hovered
-
                             color: (root.confirmIndex === 1 || isHovered)
                                 ? (root.isDestructive() ? theme.danger : theme.accent)
                                 : theme.tile
-
                             Text {
                                 anchors.centerIn: parent
                                 text: "Yes"
@@ -471,13 +464,24 @@ PanelWindow {
                                 font.weight: 700
                                 color: (root.confirmIndex === 1 || isHovered) ? theme.activeText : theme.text
                             }
-
                             HoverHandler { id: confirmHover; cursorShape: Qt.PointingHandCursor }
                             TapHandler { onTapped: root.run(root.pendingCmd) }
                         }
                     }
                 }
             }
+        }
+
+        // Top Layer: Just Border
+        Rectangle {
+            anchors.fill: parent
+            z: 2
+            radius: bgMask.radius
+            color: "transparent"
+            border.width: 1
+            border.color: win.isDarkMode ? '#d1a8c080' : '#435133'
+            antialiasing: true
+            enabled: false
         }
     }
 }
