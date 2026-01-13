@@ -324,10 +324,18 @@ khal list now 7d
 
 ## Power menu
 
-<p align="center">
-  <img src="media/screenshots/powermenu.png" height="300" alt="Quickshell Power Menu screenshot (Dark)" />
-  <img src="media/screenshots/powermenu_light.png" height="300" alt="Quickshell Power Menu screenshot (Light)" />
-</p>
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <img src="media/screenshots/powermenu.png" height="300" alt="Quickshell Power Menu screenshot (Dark)" />
+      </td>
+      <td>
+        <img src="media/screenshots/powermenu_light.png" height="300" alt="Quickshell Power Menu screenshot (Light)" />
+      </td>
+    </tr>
+  </table>
+</div>
 
 wlr-layershell power menu overlay (separate from the hub header menu). Toggled with ALT+F4
 **Run**
