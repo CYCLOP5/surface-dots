@@ -109,7 +109,6 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 ---
 
 > [!CAUTION]
-> **Compatibility Warning**
 > Layout geometry is hardcoded for a 3:2 high-resolution display. Deviation in aspect ratio or pixel density will result in misalignment.
 
 ## Hyprland
