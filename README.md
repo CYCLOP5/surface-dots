@@ -1,7 +1,6 @@
 # surface-dots
 
 Personal dotfiles + UI setup for my **Surface Laptop 4 (AMD)** running **Hyprland**.
-I originally started the Hub in AGS, but eventually switched over to Quickshell. The AGS config is still included as an early version, it’s lighter and works, just not as feature-complete.
 Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCal)
 
 ---
@@ -37,8 +36,8 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
   <br/>
 
   <img src="media/screenshots/ss8.png" width="45%" />
-  <img src="media/screenshots/ss9.png" width="45%" />
-  <p><i>Firefox Custom Start Page + EverCal Dark mode</i></p>
+  <img src="media/screenshots/ss11.png" width="45%" />
+  <p><i>More Screenshots</i></p>
 </div>
 
 ---
@@ -79,6 +78,7 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 - Everforest-Dark-theme
 - EVerforest-Light-theme
 - qt6ct
+- kvantum
 - papirus-icon-theme
 - ttf-manrope
 - ttf-nerd-fonts-symbols
@@ -107,6 +107,11 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 </table>
 
 ---
+
+<div style="background-color: #f85552bb; color: #fdf6e3; padding: 15px;">
+  <strong>Compatibility Warning</strong><br>
+  Layout geometry is hardcoded for a 3:2 high-resolution display. Deviation in aspect ratio or pixel density will result in misalignment or things looking too big. Please reconfigure values if you do not have a 3:2 high res display. 
+</div>
 
 ## Hyprland
 
@@ -361,14 +366,18 @@ Standalone network manager applet located at lib/WifiMenu.qml. With both (light/
 sudo pacman -S qt6-5compat qt6-svg qqc2-desktop-style inter-font ttf-nerd-fonts-symbols
 ```
 
+- There's an alternative version with windows hello like animations for howdy facial recognition at `sddm/themes/pixel/.withhowdy_effects`
 - To install:
   - move the contents of sddm/theme folder to `/usr/share/sddm/themes/` (create the dir if it doesn't exist yet)
   - Set "pixel" as the current theme by creating a config file in `/etc/sddm.conf.d/`:
   - make sure the directory exists:
+
   ```bash
   sudo mkdir -p /etc/sddm.conf.d
   ```
+
   - then create the config file:
+
   ```bash
   echo -e "[Theme]\nCurrent=pixel" | sudo tee /etc/sddm.conf.d/theme.conf
   ```

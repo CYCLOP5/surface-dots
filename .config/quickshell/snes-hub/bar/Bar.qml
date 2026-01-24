@@ -13,28 +13,44 @@ import "../lib" as Lib
 
 PanelWindow {
     id: win
-
     signal requestHubToggle()
 
     anchors { top: true; left: true; right: true }
     height: 40
     color: "transparent"
 
-    // --- GLOBAL STATE ---
+    // --- 1. GLOBAL STATE ---
     // Theme mode: default is always dark, false will activate light mode
     property bool isDarkMode: true
-
+    readonly property string _themeModePath: Quickshell.env("HOME") + "/.cache/quickshell/theme_mode"
+    FileView {
+        id: themeModeFile
+        path: win._themeModePath
+        watchChanges: true
+        preload: true
+        // Update local property when file loads or changes
+        onLoaded: {
+            var m = String(text() || "").trim().toLowerCase()
+            win.isDarkMode = (m !== "light")
+        }
+        onTextChanged: {
+             var m = String(text() || "").trim().toLowerCase()
+             win.isDarkMode = (m !== "light")
+        }
+        onFileChanged: reload()
+    }
+//------------------------------------------------
     WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.exclusiveZone: 33
+    WlrLayershell.exclusiveZone: 38
     WlrLayershell.namespace: "shell-bar"
-
+//------------------------------------------------
     function sh(cmd) { return ["bash", "-c", cmd] }
     function det(cmd) { Quickshell.execDetached(sh(cmd)) }
 
     // --- get active workspace ID ---
     property int activeWsId: Hyprland.focusedMonitor?.activeWorkspace?.id ?? 1
 
-    // --- THEME ---
+    // --- 2. THEME ---
     QtObject {
         id: palette
         property color bg: win.isDarkMode ? Qt.rgba(0.23, 0.25, 0.22, 0.25) : '#edc5c6b0'
@@ -50,7 +66,7 @@ PanelWindow {
         property color hoverPillG2: win.isDarkMode ? Qt.rgba(167/255, 192/255, 128/255, 0.15) : Qt.rgba(39/255, 48/255, 24/255, 0.14)
     }
 
-    // --- HYPRLAND CACHE ---
+    // --- 3. HYPRLAND CACHE ---
     QtObject {
         id: hyCache
         property var wsMap: ({}) // wsId
@@ -81,7 +97,7 @@ PanelWindow {
         Component.onCompleted: rebuild()
     }
 
-    // --- POLLERS ---
+    // ---HYPR POLLERS ---
     Timer {
         interval: 500
         running: true; repeat: false
@@ -95,7 +111,7 @@ PanelWindow {
         onTriggered: hyCache.rebuild()
     }
 
-    // Event Listener + scheduleRebuild)
+    // 5. Event Listener + scheduleRebuild)
     Connections {
         target: Hyprland
         function onRawEvent(ev) {
@@ -113,7 +129,8 @@ PanelWindow {
         }
     }
 
-    // --- POLLERS ---
+    // --- 6. POLLERS ---
+    // 6.1 UPDATE POLLER
     Lib.CommandPoll {
         id: updates
         // Stop polling while the update terminal is open
@@ -141,7 +158,7 @@ PanelWindow {
             if (!updateProc.running) updates.update()
         }
     }
-
+    // 6.2 BATTERY %, STATUS POLLER
     Lib.CommandPoll {
         id: powerPoll
         interval: {
@@ -223,10 +240,12 @@ PanelWindow {
         if (c.includes("playing")) return "󰎄"
         if (c.includes("photos") || c.includes("org.gnome.loupe") || c.includes("imv") || c.includes("feh") || c.includes("eog") || c.includes("gthumb") || c.includes("qimgv") || c.includes("viewnior")) return ""
         if (c.includes ("swappy")) return "󰫕"
+        if (c.includes ("amberol")) return "󱖏"
+        if (c.includes ("xdm")) return ""
 
         return ""
     }
-
+// ------------------ THE BAR ---------------------------------------------------------------------------------
     Rectangle {
         anchors.fill: parent
         anchors.margins: 4
@@ -237,8 +256,9 @@ PanelWindow {
         RowLayout {
             anchors.fill: parent
             spacing: 10
+// LEFT----------------------------------------------------------------------------------------------------------
 
-            // 1. LAUNCHER
+            // 7. LAUNCHER
             Item {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
@@ -285,7 +305,7 @@ PanelWindow {
                 }
             }
 
-            // 2. WORKSPACES
+            // 8. WORKSPACES
             Rectangle {
                 id: wsContainer
                 Layout.preferredHeight: 34
@@ -457,8 +477,9 @@ PanelWindow {
                     }
                 }
             }
+//------------------------------------------------- CENTER -----------------------------------------------------
 
-            // 3. MEDIA & TITLE
+            // 9. MEDIA & TITLE 
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
@@ -493,7 +514,9 @@ PanelWindow {
                 }
             }
 
-            // 4. UPDATES
+//----------------------------------------------------------------------------------------RIGHT----------
+
+            // 10. UPDATES
             BarItem {
                 property color updatesBg: win.isDarkMode ? '#ce829469' : '#be7f9b58'
                 property color updatesFg: win.isDarkMode ? "#2d353b" : "#1e2326"
@@ -523,7 +546,7 @@ PanelWindow {
                 }
             }
 
-            // 5. TRAY
+            // 11. TRAY
             Rectangle {
                 visible: SystemTray.items.length > 0
                 height: 30
@@ -563,7 +586,7 @@ PanelWindow {
                 }
             }
 
-            // 6. BATTERY
+            // 12. BATTERY
             BarItem {
                 Layout.preferredWidth: 74
                 property string status: String(batStatus.value).trim()
@@ -619,7 +642,7 @@ PanelWindow {
                 }
             }
 
-            // 7. CLOCK
+            // 13. CLOCK/DATE
             Rectangle {
                 id: clockRect
                 Layout.preferredHeight: 34

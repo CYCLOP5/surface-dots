@@ -29,17 +29,18 @@ truncation_symbol = "…/"
 [git_branch]
 symbol = ""
 style = "bg:#414b50 fg:#a7c080"
-format = '[$symbol $branch ]($style)' 
+format = '[](fg:#414b50)[$symbol $branch ]($style)[](fg:#414b50) '
 
 [git_status]
 style = "bg:#414b50 fg:#e67e80"
-format = '[$all_status$ahead_behind ]($style)'
+format = '[](fg:#414b50)[$all_status$ahead_behind ]($style)[](fg:#414b50) '
 
 [python]
-symbol = ""
-style = "bg:#414b50 fg:#dbbc7f"
-format = '[$symbol ($version) ]($style)'
+symbol = " "
+style = "bg:#FFE873 fg:#306998"
+format = '[](fg:#FFE873)[$symbol$version]($style)[](fg:#FFE873)'
 detect_extensions = []
+detect_files = []
 
 [nodejs]
 symbol = ""

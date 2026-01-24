@@ -1,87 +1,94 @@
 #!/bin/bash
 set -e
 
-# --- GTK THEMES ---
+# =============================================================================
+# GLOBAL THEME SWITCHER 
+# =============================================================================
+# This script switches between light and dark themes across:
+# - GTK 3/4 apps
+# - KDE Plasma (when used as backup WM)
+# - Kvantum themes
+# - Wallpapers
+# - Mako
+# - Kitty terminal
+# =============================================================================
+
+# THEMES
 THEME_DARK="Everforest-Dark-Green-Dark"
 THEME_LIGHT="Everforest-Light-Green-Light"
-
-# --- ICON THEMES ---
 ICONS_DARK="Papirus-Dark"
 ICONS_LIGHT="Papirus-Light"
 
-# --- WALLPAPERS ---
-WALLPAPER_DARK="/home/snes/Pictures/desktop/3.png"
-WALLPAPER_LIGHT="/home/snes/Pictures/desktop/l2.png"
+# WALLPAPERS
+WALLPAPER_DARK="$HOME/Pictures/desktop/1.png"
+WALLPAPER_LIGHT="$HOME/Pictures/desktop/l2.png"
 
-# --- PATHS ---
+# PATHS
 GTK3_CONF="$HOME/.config/gtk-3.0"
-GTK4_CONF="$HOME/.config/gtk-4.0"
 GTK3_SETTINGS="$GTK3_CONF/settings.ini"
-
-# VS Code settings (change if you use OSS)
-VSCODE_SETTINGS="$HOME/.config/Code/User/settings.json"
-# VSCODE_SETTINGS="$HOME/.config/Code - OSS/User/settings.json"
-
-# Hub theme state file (Quickshell Hub ThemeEngine)
-STATE_FILE="$HOME/.cache/quickshell/theme_mode"
-
-# KDE globals
+GTK4_CONF="$HOME/.config/gtk-4.0"
 KDE_GLOBALS="$HOME/.config/kdeglobals"
+STATE_FILE="$HOME/.cache/quickshell/theme_mode"
+KITTY_STATE="$HOME/.local/state/theme/kitty_theme.conf"
+MAKO_CONF="$HOME/.config/mako/config"
 
-mkdir -p "$GTK3_CONF" "$GTK4_CONF" "$(dirname "$STATE_FILE")"
+# Create necessary directories if they don't exist
+# mkdir -p "$GTK3_CONF" "$GTK4_CONF" "$(dirname "$STATE_FILE")" "$(dirname "$KITTY_STATE")"
 
-# --- HELPERS ---
 
-gtk3_settings_ini() {
+# HELPER FUNCTIONS
+
+# Make sure GTK3 settings file exists with proper structure
+ensure_gtk3_ini() {
   if [ ! -f "$GTK3_SETTINGS" ]; then
-    cat > "$GTK3_SETTINGS" <<'EOF'
-[Settings]
-gtk-theme-name=
-gtk-icon-theme-name=
-gtk-application-prefer-dark-theme=0
-EOF
-  else
-    if ! grep -q '^\[Settings\]' "$GTK3_SETTINGS"; then
-      printf "[Settings]\n" | cat - "$GTK3_SETTINGS" > "${GTK3_SETTINGS}.tmp" && mv "${GTK3_SETTINGS}.tmp" "$GTK3_SETTINGS"
-    fi
+    printf "[Settings]\ngtk-theme-name=\ngtk-icon-theme-name=\ngtk-application-prefer-dark-theme=0\n" > "$GTK3_SETTINGS"
+  elif ! grep -q '^\[Settings\]' "$GTK3_SETTINGS"; then
+    sed -i '1i [Settings]' "$GTK3_SETTINGS"
   fi
 }
 
-set_ini_key() {
-  # Usage: set_ini_key file key value
-  local file="$1" key="$2" value="$3"
+# Update INI file
+update_ini_key() {
+  local file="$1" 
+  local key="$2" 
+  local value="$3"
+  
   if grep -q "^${key}=" "$file"; then
+    # Key exists, update it
     sed -i "s|^${key}=.*|${key}=${value}|" "$file"
   else
+    # Key doesn't exist, add it under [Settings]
     sed -i "/^\[Settings\]/a ${key}=${value}" "$file"
   fi
 }
 
-set_vscode_theme() {
-  local theme_name="$1"
-  if [ -f "$VSCODE_SETTINGS" ]; then
-    # If key exists, replace. If not, insert near top (after first {).
-    if grep -q '"workbench.colorTheme"' "$VSCODE_SETTINGS"; then
-      sed -i "s/\"workbench\.colorTheme\": \"[^\"]*\"/\"workbench.colorTheme\": \"${theme_name}\"/" "$VSCODE_SETTINGS"
-    else
-      sed -i "0,/{/s/{/{\n  \"workbench.colorTheme\": \"${theme_name}\",/" "$VSCODE_SETTINGS"
-    fi
-  fi
+# GTK4 uses symlinks to theme files instead of a config file
+update_gtk4_links() {
+  local theme="$1"
+  local theme_path="$HOME/.themes/$theme/gtk-4.0"
+  
+  # Remove old symlinks
+  rm -f "$GTK4_CONF/assets" "$GTK4_CONF/gtk.css" "$GTK4_CONF/gtk-dark.css"
+  
+  # Create new symlinks to the theme
+  ln -sf "$theme_path/assets"  "$GTK4_CONF/assets"
+  ln -sf "$theme_path/gtk.css" "$GTK4_CONF/gtk.css"
+  [ -f "$theme_path/gtk-dark.css" ] && ln -sf "$theme_path/gtk-dark.css" "$GTK4_CONF/gtk-dark.css"
 }
 
-sync_kde_icons_optional() {
-  # Only runs if KDE tools exist and kdeglobals exists.
-  local icon_theme="$1"
-
+# Update KDE icon theme
+update_kde_icons() {
   [ -f "$KDE_GLOBALS" ] || return 0
-
-  if command -v kwriteconfig6 &>/dev/null; then
-    kwriteconfig6 --file "$KDE_GLOBALS" --group Icons --key Theme "$icon_theme"
-  elif command -v kwriteconfig5 &>/dev/null; then
-    kwriteconfig5 --file "$KDE_GLOBALS" --group Icons --key Theme "$icon_theme"
+  
+  # Use kwriteconfig6 if available, otherwise fall back to kwriteconfig5
+  local tool=""
+  command -v kwriteconfig6 &>/dev/null && tool="kwriteconfig6" || tool="kwriteconfig5"
+  
+  if [ -n "$tool" ]; then
+    $tool --file "$KDE_GLOBALS" --group Icons --key Theme "$1"
   fi
-
-  # Gets KDE to refresh if possible
+  
+  # KWin config reload
   if command -v qdbus6 &>/dev/null; then
     qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
   elif command -v qdbus &>/dev/null; then
@@ -89,123 +96,191 @@ sync_kde_icons_optional() {
   fi
 }
 
-set_gtk4_assets() {
-  local theme="$1"
-  rm -rf "$GTK4_CONF/assets" "$GTK4_CONF/gtk.css" "$GTK4_CONF/gtk-dark.css"
-
-  ln -sf "$HOME/.themes/$theme/gtk-4.0/assets"  "$GTK4_CONF/assets"
-  ln -sf "$HOME/.themes/$theme/gtk-4.0/gtk.css" "$GTK4_CONF/gtk.css"
-
-  if [ -f "$HOME/.themes/$theme/gtk-4.0/gtk-dark.css" ]; then
-    ln -sf "$HOME/.themes/$theme/gtk-4.0/gtk-dark.css" "$GTK4_CONF/gtk-dark.css"
-  fi
+# Update Kitty terminal theme
+update_kitty() {
+  local source_conf="$1"
+  ln -sf "$source_conf" "$KITTY_STATE"
+  # Reload Kitty config without restarting
+  kill -SIGUSR1 $(pidof kitty) 2>/dev/null || true
 }
 
-reload_kitty() {
-  local pids
-  pids="$(pidof kitty 2>/dev/null || true)"
-  [ -n "$pids" ] && kill -SIGUSR1 $pids 2>/dev/null || true
+# Update Mako notification theme
+update_mako() {
+  local source_conf="$1"
+  # Link the specific theme file to the active config path
+  ln -sf "$HOME/.config/mako/$source_conf" "$MAKO_CONF"
+  # Reload mako to apply changes immediately
+  makoctl reload 2>/dev/null || true
 }
 
-xfce_thunar_sync_optional() {
-  local theme="$1"
+
+# OPTIONAL: VS CODE THEME SWITCHING
+
+# NOTE: I prefer to handle VS Code themes natively using settings.json with:
+#   "workbench.preferredDarkColorTheme": "Everforest Dark",
+#   "workbench.preferredLightColorTheme": "Everforest Light"
+#
+# Uncomment the function below if that somehow didn't work or if you want the script to handle it instead:
+
+#set_vscode_theme() {
+#  local theme_name="$1"
+#  local VSCODE_SETTINGS="$HOME/.config/Code/User/settings.json"
+#  # Use this path for VS Code OSS:
+#  # local VSCODE_SETTINGS="$HOME/.config/Code - OSS/User/settings.json"
+#  
+#  if [ -f "$VSCODE_SETTINGS" ]; then
+#    if grep -q '"workbench.colorTheme"' "$VSCODE_SETTINGS"; then
+#      sed -i "s/\"workbench\.colorTheme\": \"[^\"]*\"/\"workbench.colorTheme\": \"${theme_name}\"/" "$VSCODE_SETTINGS"
+#    else
+#      sed -i "0,/{/s/{/{\n  \"workbench.colorTheme\": \"${theme_name}\",/" "$VSCODE_SETTINGS"
+#    fi
+#  fi
+#}
+
+# OPTIONAL: XFCE/Thunar SYNC
+# If you don't use XFCE/Thunar, comment or remove this to sync Thunar themes:
+
+xfce_thunar_sync() {
+  local theme="$1" 
   local icons="$2"
-
   if command -v xfconf-query &>/dev/null; then
     xfconf-query -c xsettings -p /Net/ThemeName -s "$theme" >/dev/null 2>&1 || true
     xfconf-query -c xsettings -p /Net/IconThemeName -s "$icons" >/dev/null 2>&1 || true
   fi
 }
 
-# --- APPLY THEMES ---
 
-apply_dark() {
-  echo "Applying Dark Theme..."
-  echo "dark" > "$STATE_FILE"
-
-  # Wallpaper
-  command -v waypaper &>/dev/null && waypaper --wallpaper "$WALLPAPER_DARK" || true
-
-  gtk3_settings_ini
-
-  # GTK via gsettings
+# MAIN THEME FUNCTION
+apply_theme() {
+  local mode="$1"              # "light" or "dark"
+  local theme_gtk="$2"         # GTK theme name
+  local theme_icon="$3"        # Icon theme name
+  local theme_kvantum="$4"     # Kvantum theme name
+  local wallpaper="$5"         # Wallpaper path
+  local kitty_conf="$6"        # Kitty config file name
+  local mako_conf="$7"
+  local prefer_dark_bool="$8"  # "true" or "false" for gsettings
+  local gnome_scheme="$9"      # "prefer-dark" or "prefer-light"
+  
+  # Convert boolean to integer for GTK settings.ini
+  local prefer_dark_int=0
+  [ "$prefer_dark_bool" == "true" ] && prefer_dark_int=1
+  
+  echo "Switching to $mode mode..."
+  echo "$mode" > "$STATE_FILE"
+  
+  # ---------------------------------------------------------------------------
+  # GTK 3
+  # ---------------------------------------------------------------------------
+  ensure_gtk3_ini
+  update_ini_key "$GTK3_SETTINGS" "gtk-theme-name" "$theme_gtk"
+  update_ini_key "$GTK3_SETTINGS" "gtk-icon-theme-name" "$theme_icon"
+  update_ini_key "$GTK3_SETTINGS" "gtk-application-prefer-dark-theme" "$prefer_dark_int"
+  touch "$GTK3_SETTINGS"  # Force timestamp update so apps notice the change
+  
+  # ---------------------------------------------------------------------------
+  # GTK 4
+  # ---------------------------------------------------------------------------
+  update_gtk4_links "$theme_gtk"
+  
+  # ---------------------------------------------------------------------------
+  # GNOME/GSETTINGS (for GTK apps that check gsettings)
+  # ---------------------------------------------------------------------------
   if command -v gsettings &>/dev/null; then
-    gsettings set org.gnome.desktop.interface gtk-theme "$THEME_DARK" || true
-    gsettings set org.gnome.desktop.interface icon-theme "$ICONS_DARK" || true
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || true
-    gsettings set org.gnome.desktop.interface gtk-application-prefer-dark-theme true || true
+    gsettings set org.gnome.desktop.interface color-scheme "$gnome_scheme" || true
+    gsettings set org.gnome.desktop.interface gtk-application-prefer-dark-theme "$prefer_dark_bool" || true
+    gsettings set org.gnome.desktop.interface icon-theme "$theme_icon" || true
+    gsettings set org.gnome.desktop.interface gtk-theme "$theme_gtk" || true
   fi
+  
+  # Restart Nautilus if it's running so it picks up the new theme
+  # pkill nautilus || true
+  
+  # ---------------------------------------------------------------------------
+  # KDE PLASMA & KVANTUM
+  # ---------------------------------------------------------------------------
+  # This section handles both Plasma (my backup WM) and Kvantum app styling
+  
+  # Set Plasma color scheme (controls shell, panels, system UI)
+  if [ "$mode" == "dark" ]; then
+    plasma-apply-colorscheme "Everforest Dark" 2>/dev/null || true
+  else
+    plasma-apply-colorscheme "Everforest Light" 2>/dev/null || true
+  fi
+  
+  # Set application style to Kvantum
+  local kwrite_tool=""
+  command -v kwriteconfig6 &>/dev/null && kwrite_tool="kwriteconfig6" || kwrite_tool="kwriteconfig5"
+  if [ -n "$kwrite_tool" ]; then
+    $kwrite_tool --file "$KDE_GLOBALS" --group KDE --key widgetStyle kvantum
+  fi
+  
+  # Set Kvantum theme (application colors)
+  if command -v kvantummanager &>/dev/null; then
+     kvantummanager --set "$theme_kvantum" >/dev/null 2>&1 || true
+  fi
+  
+  # Update icon theme in KDE
+  update_kde_icons "$theme_icon"
+  
+  # Restart Plasma shell if in Plasma 
+  if pgrep plasmashell &>/dev/null; then
+    killall plasmashell 2>/dev/null || true
+    kstart5 plasmashell 2>/dev/null || kstart plasmashell 2>/dev/null || true
+  fi
+  
+  # Restart Dolphin so it picks up the new colors
+  pkill dolphin || true
+  
+  # ---------------------------------------------------------------------------
+  # WALLPAPER
+  # ---------------------------------------------------------------------------
+  command -v waypaper &>/dev/null && waypaper --wallpaper "$wallpaper" || true
+  
+  # ---------------------------------------------------------------------------
+  # KITTY TERMINAL
+  # ---------------------------------------------------------------------------
+  update_kitty "$HOME/.config/kitty/themes/$kitty_conf"
+  
+  # ---------------------------------------------------------------------------
+  # OPTIONAL INTEGRATIONS
+  # ---------------------------------------------------------------------------
+  # Uncomment if needed:
+  xfce_thunar_sync "$theme_gtk" "$theme_icon"
+  # set_vscode_theme "Everforest $mode"
+  
+  # ---------------------------------------------------------------------------
+  # NOTIFICATION
+  # ---------------------------------------------------------------------------
+  update_mako "$mako_conf"
 
-  # GTK3 settings.ini
-  set_ini_key "$GTK3_SETTINGS" "gtk-theme-name" "$THEME_DARK"
-  set_ini_key "$GTK3_SETTINGS" "gtk-icon-theme-name" "$ICONS_DARK"
-  set_ini_key "$GTK3_SETTINGS" "gtk-application-prefer-dark-theme" "1"
-
-  #KDE sync
-  sync_kde_icons_optional "$ICONS_DARK"
-
-  # Thunar annoyance
-  xfce_thunar_sync_optional "$THEME_DARK" "$ICONS_DARK"
-
-  # GTK4 assets
-  set_gtk4_assets "$THEME_DARK"
-
-  # VS Code
-  set_vscode_theme "Everforest Dark"
-
-  # Kitty
-  local KITTY_THEME_TARGET="$HOME/.local/state/theme/kitty_theme.conf"
-  local KITTY_THEME_SOURCE="$HOME/.config/kitty/themes/everforest.conf"
-  mkdir -p "$(dirname "$KITTY_THEME_TARGET")"
-  ln -sf "$KITTY_THEME_SOURCE" "$KITTY_THEME_TARGET"
-  reload_kitty
+  if command -v notify-send &>/dev/null; then
+    notify-send -u normal -t 3000 "Theme Switcher" "Switched to $mode mode"
+  fi
 }
 
-apply_light() {
-  echo "Applying Light Theme..."
-  echo "light" > "$STATE_FILE"
 
-  # Wallpaper
-  command -v waypaper &>/dev/null && waypaper --wallpaper "$WALLPAPER_LIGHT" || true
+# SCRIPT EXECUTION
 
-  gtk3_settings_ini
-
-  # GTK via gsettings
-  if command -v gsettings &>/dev/null; then
-    gsettings set org.gnome.desktop.interface gtk-theme "$THEME_LIGHT" || true
-    gsettings set org.gnome.desktop.interface icon-theme "$ICONS_LIGHT" || true
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light' || true
-    gsettings set org.gnome.desktop.interface gtk-application-prefer-dark-theme false || true
-  fi
-
-  # GTK3 settings.ini
-  set_ini_key "$GTK3_SETTINGS" "gtk-theme-name" "$THEME_LIGHT"
-  set_ini_key "$GTK3_SETTINGS" "gtk-icon-theme-name" "$ICONS_LIGHT"
-  set_ini_key "$GTK3_SETTINGS" "gtk-application-prefer-dark-theme" "0"
-
-  # KDE sync
-  sync_kde_icons_optional "$ICONS_LIGHT"
-
-  # thunar
-  xfce_thunar_sync_optional "$THEME_LIGHT" "$ICONS_LIGHT"
-
-  # GTK4 assets
-  set_gtk4_assets "$THEME_LIGHT"
-
-  # VS Code
-  set_vscode_theme "Everforest Light"
-
-  # Kitty
-  local KITTY_THEME_TARGET="$HOME/.local/state/theme/kitty_theme.conf"
-  local KITTY_THEME_SOURCE="$HOME/.config/kitty/themes/everforest_light.conf"
-  mkdir -p "$(dirname "$KITTY_THEME_TARGET")"
-  ln -sf "$KITTY_THEME_SOURCE" "$KITTY_THEME_TARGET"
-  reload_kitty
-}
-
-# --- EXECUTION ---
 if [ "$1" == "light" ]; then
-  apply_light
+  apply_theme "light" \
+    "$THEME_LIGHT" \
+    "$ICONS_LIGHT" \
+    "EverforestGreenLight" \
+    "$WALLPAPER_LIGHT" \
+    "everforest_light.conf" \
+    "config_light" \
+    "false" \
+    "prefer-light"
 else
-  apply_dark
+  # Default to dark
+  apply_theme "dark" \
+    "$THEME_DARK" \
+    "$ICONS_DARK" \
+    "EverforestGreenDark" \
+    "$WALLPAPER_DARK" \
+    "everforest.conf" \
+    "config_dark" \
+    "true" \
+    "prefer-dark"
 fi
