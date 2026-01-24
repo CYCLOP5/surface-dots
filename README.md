@@ -109,7 +109,7 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 ---
 
 > [!CAUTION]
-> Layout geometry is hardcoded for a 3:2 high-resolution display. Deviation in aspect ratio or pixel density will result in misalignment.
+> Layout geometry is hardcoded for a 3:2 high-resolution display. Deviation in aspect ratio or pixel density will result in misalignment or things looking too big. Please reconfigure values if you do not have a 3:2 high res display.
 
 ## Hyprland
 
