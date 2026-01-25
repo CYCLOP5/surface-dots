@@ -36,12 +36,10 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 
   <br/>
 
-  <img src="media/screenshots/ss8.png" width="45%" />
+  <img src="media/screenshots/reading_mode.png" width="45%" />
   <img src="media/screenshots/ss11.png" width="45%" />
-  <p><i>More Screenshots</i></p>
+  <p><i>Reading Mode (Left) Light theme windows (Right)/i></p>
 </div>
-
----
 
 ## Dependencies
 
@@ -184,11 +182,6 @@ Old Config at `~/.config/hypr/hyprland_OLD.conf`
 ---
 
 ## Reading Mode
-
-<div align="center">
-  <img src="media/screenshots/reading_mode.png" width="40%" />
-  ...
-</div>
 
 A shader-based reading mode to mimic an e-ink reader.
 
