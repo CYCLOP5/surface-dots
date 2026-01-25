@@ -193,7 +193,7 @@ PanelWindow {
         if (c.includes("qutebrowser")) return "󰖟"
         if (c.includes("kitty")) return "󰄛"
         if (c.includes("alacritty") || c.includes("foot") || c.includes("terminal") || c.includes("ghostty") || c.includes("wezterm")) return ""
-        if (c.includes("code") || c.includes("codium")) return "󰨞"
+        if (c.includes("code") || c.includes("codium")) return ""
         if (c.includes("sublime")) return "󰅳"
         if (c.includes("neovide") || c.includes("nvim")) return ""
         if (c.includes("idea") || c.includes("jetbrains")) return ""
@@ -224,7 +224,7 @@ PanelWindow {
         if (c.includes("lutris")) return "󰺵"
         if (c.includes("heroic")) return "󰊖"
         if (c.includes("prismlauncher")) return "󰍳"
-        if (c.includes("writer")) return "󰈬"
+        if (c.includes("libreoffice-writer")) return "󰈬"
         if (c.includes("calc")) return "󰧷"
         if (c.includes("impress")) return "󰈧"
         if (c.includes("libreoffice")) return "󰈙"
@@ -242,6 +242,8 @@ PanelWindow {
         if (c.includes ("swappy")) return "󰫕"
         if (c.includes ("amberol")) return "󱖏"
         if (c.includes ("xdm")) return ""
+        if (c.includes ("zathura")) return ""
+        if (c.includes ("focuswriter")) return "󱞁"
 
         return ""
     }
@@ -453,6 +455,7 @@ PanelWindow {
                                             text: win.getIcon(parent.safeClass)
                                             font.family: Theme.iconFont; font.pixelSize: 18; lineHeight: 0.8
                                             verticalAlignment: Text.AlignVCenter
+                                            font.hintingPreference: Font.PreferNoHinting
                                             Behavior on color { enabled: !modelData.urgent; ColorAnimation { duration: 140 } }
                                             scale: (wsDelegate.isActive && wsHover.hovered) ? 1.25 : 1.0
                                             Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutBack; easing.overshoot: 1.5 } }
@@ -460,7 +463,11 @@ PanelWindow {
                                                    (modelData.urgent ? flashColor.val :
                                                    (wsHover.hovered ? (win.isDarkMode ? "#f2f2f2" : palette.accent) :
                                                    (win.isDarkMode ? "#d5c9b2" : "#1e2326")))
+                                        layer.enabled: true
+                                        layer.smooth: true
+                                        layer.mipmap: true
                                         }
+
                                     }
                                 }
                             }

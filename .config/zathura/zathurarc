@@ -1,0 +1,20 @@
+# UI Settings
+set guioptions ""             # Removes the status bar/command bar
+set window-title-basename true
+set statusbar-h-padding 0
+set statusbar-v-padding 0
+set page-padding 1            # Minimal padding between pages
+set scrollbars false          # No visual scrollbar
+
+# High Contrast
+set recolor "true"
+set recolor-lightcolor "#ffffff" # Background
+set recolor-darkcolor "#000000"  # Text
+set default-bg "#ffffff"
+
+# Navigation
+map i recolor                 # Toggle high contrast mode
+map [fullscreen] a adjust_window best-fit
+map [fullscreen] s adjust_window width
+map f toggle_fullscreen
+map [normal] <BackSpace> navigate previous
