@@ -9,6 +9,7 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 
 - [Dependencies](#dependencies)
 - [Hyprland](#hyprland)
+- [Reading Mode](#reading-mode)
 - [Quickshell Bar](#quickshell-bar)
 - [Quickshell Hub (`snes-hub`)](#quickshell-hub-snes-hub)
 - [Google Calendar sync (vdirsyncer + khal)](#google-calendar-sync-vdirsyncer--khal)
@@ -53,6 +54,7 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 - Hyprland
 - hypridle
 - hyprlock
+- hyprshade
 - hyprland-plugins
 - xdg-utils
 - xdg-desktop-portal-hyprland
@@ -125,6 +127,7 @@ Old Config at `~/.config/hypr/hyprland_OLD.conf`
 - `SUPER + E` → file manager (`thunar`)
 - `SUPER + R` → rofi launcher script
 - `SUPER + B` → firefox
+- `SUPER + D` → reading mode
 
 ### Window actions
 
@@ -179,6 +182,24 @@ Old Config at `~/.config/hypr/hyprland_OLD.conf`
 </details>
 
 ---
+
+## Reading Mode
+
+<div align="center">
+  <img src="media/screenshots/reading_mode.png" width="40%" />
+  ...
+</div>
+
+A shader-based reading mode to mimic an e-ink reader.
+
+- Toggle with `SUPER + D`
+- Automatically disables animations, shadows, and blur
+- Custom GLSL shader with e-ink-like color reproduction
+- Warm cream paper tone
+- Soft charcoal blacks for reduced contrast
+- Fine paper grain -like texture
+- Shader located at `~/.config/hypr/shaders/grayscale.glsl`
+- Uses [hyprshade](https://github.com/loqusion/hyprshade)
 
 ## Quickshell Bar
 
