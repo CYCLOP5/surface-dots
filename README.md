@@ -31,14 +31,14 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
   <br/>
 
   <img src="media/screenshots/ss4.png" width="45%" />
-  <img src="media/screenshots/ss5.png" width="45%" />
+  <img src="media/screenshots/ss6.png" width="45%" />
   <p><i>Dark Mode & Light Mode (Hub + Rofi + Now-playing)</i></p>
 
   <br/>
 
   <img src="media/screenshots/reading_mode.png" width="45%" />
-  <img src="media/screenshots/ss11.png" width="45%" />
-  <p><i>Reading Mode (Left) Light theme windows (Right)</i></p>
+  <img src="media/screenshots/ss13.png" width="45%" />
+  <p><i>Reading mode & Various Light mode apps</i></p>
 </div>
 
 ## Dependencies
