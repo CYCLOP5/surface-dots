@@ -10,6 +10,13 @@ Lib.Card {
   signal batteryToggleRequested()
   property bool active: true
 
+  property bool autoMode: true
+  Component.onCompleted: {
+        if (root.autoMode) {
+            det("sudo auto-cpufreq --force=reset")
+        }
+    }
+
   function sh(cmd) { return ["bash","-lc", cmd] }
   function det(cmd) { Quickshell.execDetached(sh(cmd)) }
 
@@ -90,60 +97,62 @@ Lib.Card {
     onUpdated: if (!briS.pressed) briS.value = value
   }
 
-  // --- SURFACE PROFILE ---
-  property string localPerfState: "balanced"
+// --- CPU GOVERNOR (AUTO-CPUFREQ) ---
+  property string cpuGov: "powersave"
+  property bool _isChanging: false
 
   Lib.CommandPoll {
     id: perfPoll
-    running: root.active && root.visible
+    running: root.active && root.visible && !root._isChanging
+    interval: 30000
+    command: sh("cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || echo 'powersave'")
+    parse: function(o) { return String(o).trim() }
+    onUpdated: root.cpuGov = value
+  }
+
+  Timer {
+    id: pollLockout
     interval: 5000
-    command: sh("sudo surface profile get 2>/dev/null || echo 'balanced'")
-    parse: function(o) {
-      var val = String(o).trim().toLowerCase()
-      root.localPerfState = val
-      return val
+    onTriggered: root._isChanging = false
+  }
+
+  function togglePerf() {
+    root._isChanging = true
+    pollLockout.restart()
+
+    if (root.autoMode) {
+      // Auto -> Force Performance
+      root.autoMode = false
+      root.cpuGov = "performance"
+      det("sudo auto-cpufreq --force=performance")
+    } else if (root.cpuGov === "performance") {
+      // Performance -> Force Powersave
+      root.cpuGov = "powersave"
+      det("sudo auto-cpufreq --force=powersave")
+    } else {
+      // Powersave -> Auto (Reset)
+      root.autoMode = true
+      det("sudo auto-cpufreq --force=reset")
     }
   }
 
-  function cyclePerf() {
-    var current = root.localPerfState
-    var next = "balanced"
-    if (current.includes("low")) next = "balanced"
-    else if (current === "balanced") next = "balanced-performance"
-    else if (current.includes("balanced-performance")) next = "performance"
-    else if (current.includes("performance")) next = "low-power"
-    root.localPerfState = next
-    det("sudo surface profile set " + next)
-  }
-
   function getPerfIcon() {
-    var s = root.localPerfState
-    if (s.includes("low")) return ""
-    if (s === "balanced") return "󰾅"
-    if (s.includes("balanced-performance")) return ""
-    if (s.includes("performance")) return ""
-    return "󰾅"
+    if (root.autoMode) return "󰚥" // Auto icon
+    return (root.cpuGov === "performance") ? "󰓅" : "󰌪"
   }
 
   function getPerfLabel() {
-    var s = root.localPerfState
-    if (s.includes("low")) return "Saver"
-    if (s === "balanced") return "Normal"
-    if (s.includes("balanced-performance")) return "Optimized"
-    if (s.includes("performance")) return "Perf"
-    return "Normal"
-  }
-
-  function isPerfActive() {
-    var s = root.localPerfState
-    return (s.includes("low") || s === "balanced")
+    if (root.autoMode) return "Auto"
+    return (root.cpuGov === "performance") ? "Max" : "Powersave"
   }
 
   function getPerfColor() {
-    var s = root.localPerfState
-    if (s.includes("balanced-performance")) return "#dbbc7f"
-    if (s.includes("performance")) return Theme.accentRed
-    return (root.theme ? root.theme.textPrimary : Theme.fgMain)
+    if (root.autoMode) {
+      return (root.theme && root.theme.isDarkMode !== undefined && !root.theme.isDarkMode)
+        ? '#577952' // Hardcoded colors for now
+        : (Theme.accent || "#a7c080") // 
+    }
+    return (root.cpuGov === "performance") ? Theme.accentRed : (root.theme ? root.theme.textPrimary : Theme.fgMain)
   }
 
   // --- DND ---
@@ -204,10 +213,10 @@ Lib.Card {
         theme: root.theme
         icon: root.getPerfIcon()
         label: root.getPerfLabel()
-        active: root.isPerfActive()
+        active: (root.cpuGov === "performance" && !root.autoMode)
         customIconColor: root.getPerfColor()
-        hasCustomColor: !root.isPerfActive()
-        onClicked: root.cyclePerf()
+        hasCustomColor: true
+        onClicked: root.togglePerf()
         onRightClicked: root.batteryToggleRequested()
         fixX: -2
       }

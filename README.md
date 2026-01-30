@@ -62,6 +62,7 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 - sddm
 - networkmanager
 - bluez, blueman
+- lua
 
 </td>
 <td valign="top">
@@ -101,6 +102,7 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 - curl, jq
 - flutter, dart
 - linux-surface tools (Linux-surface only)
+- auto-cpufreq
 
 </td>
 </tr>
@@ -404,19 +406,6 @@ Firefox doesn't really want you to use local html as a new tab page so
 - Move autoconfig.js to Firefox defaults/pref/ (e.g. /usr/lib/firefox/defaults/pref/)
 - Edit mozilla.cfg (repo path: .config/firefox/mozilla.cfg) and set your file path
 - Move mozilla.cfg to the Firefox install directory root (e.g. /usr/lib/firefox/)
-
-## Surface-only features
-
-- Some features (like the performance toggle) are Surface-specific and depend on the linux-surface tooling.
-- To adapt this setup to other hardware:
-- Replace Surface-specific calls in `ButtonsSlidersCard.qml` like:
-
-```bash
-sudo surface profile get
-sudo surface profile set <mode>
-```
-
-- Swap in your own governor/performance scripts.
 
 ## Credits & acknowledgements
 
