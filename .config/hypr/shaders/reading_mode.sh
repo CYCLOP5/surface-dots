@@ -20,8 +20,10 @@ if hyprshade current | grep -q "grayscale"; then
 else
     # ACTIVATES
     hyprshade on "$SHADER"
+    pkill qs
     "$THEME" light
     swww img "$WALLPAPER" --transition-type none
+    brightnessctl set 37% 
     # Force E-ink visuals: No animations, no shadows, thin black borders
     hyprctl keyword animations:enabled 0
     hyprctl keyword decoration:drop_shadow 0
@@ -33,6 +35,5 @@ else
     hyprctl keyword general:col.active_border "rgba(000000ff)"
     hyprctl keyword general:col.inactive_border "rgba(000000ff)"
     hyprctl keyword decoration:dim_inactive 0
-    brightnessctl set 37% 
-    pkill qs
+    
 fi

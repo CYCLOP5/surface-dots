@@ -37,8 +37,8 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
   <br/>
 
   <img src="media/screenshots/reading_mode.png" width="45%" />
-  <img src="media/screenshots/ss13.png" width="45%" />
-  <p><i>Reading mode & Various Light mode apps</i></p>
+  <img src="media/screenshots/ss12.png" width="45%" />
+  <p><i>Reading mode & Various other apps</i></p>
 </div>
 
 ## Dependencies
