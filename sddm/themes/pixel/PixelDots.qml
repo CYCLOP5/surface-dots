@@ -34,8 +34,8 @@ Row {
             Canvas {
                 id: shapeCanvas
                 anchors.centerIn: parent
-                width: 26
-                height: 26
+                width: Math.round(26 * dotsRoot.dynamicScale)
+                height: Math.round(26 * dotsRoot.dynamicScale)
 
                 property color currentColor: dotsRoot.dotColor
                 onCurrentColorChanged: requestPaint()

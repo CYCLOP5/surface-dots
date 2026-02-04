@@ -3,8 +3,9 @@ import QtQuick.Shapes 1.15
 
 Item {
     id: root
-    width: 120
-    height: 120
+    readonly property real localScale: Math.max(0.6, Math.min(1.6, Math.min(Screen.width, Screen.height) / 900))
+    width: Math.round(120 * localScale)
+    height: Math.round(120 * localScale)
 
     // Properties
     property string status: "idle" 
@@ -13,32 +14,32 @@ Item {
     property color colorError: "#ff6b6b"
 
     property color currentColor: colorScan
-    property real currentY: 30       
+    property real currentY: Math.round(30 * localScale)
     property real curveDepth: 0      
 
     // EYES - -
     Item {
         id: eyesContainer
-        y: 25; width: 70; height: 20
+        y: Math.round(25 * root.localScale); width: Math.round(70 * root.localScale); height: Math.round(20 * root.localScale)
         anchors.horizontalCenter: parent.horizontalCenter
         z: 2
 
-        Rectangle { id: eyeLeft; width: 18; height: 18; radius: 9; color: root.currentColor; anchors.left: parent.left; opacity: 0; scale: 0 }
-        Rectangle { id: eyeRight; width: 18; height: 18; radius: 9; color: root.currentColor; anchors.right: parent.right; opacity: 0; scale: 0 }
+        Rectangle { id: eyeLeft; width: Math.round(18 * root.localScale); height: Math.round(18 * root.localScale); radius: Math.round(9 * root.localScale); color: root.currentColor; anchors.left: parent.left; opacity: 0; scale: 0 }
+        Rectangle { id: eyeRight; width: Math.round(18 * root.localScale); height: Math.round(18 * root.localScale); radius: Math.round(9 * root.localScale); color: root.currentColor; anchors.right: parent.right; opacity: 0; scale: 0 }
     }
 
     // Mouth :)
     Shape {
         id: mouthShape
-        width: 80; height: 60
+        width: Math.round(80 * root.localScale); height: Math.round(60 * root.localScale)
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: root.status === "verified" ? 15 : 0
+        anchors.verticalCenterOffset: root.status === "verified" ? Math.round(15 * root.localScale) : 0
         layer.enabled: true; layer.samples: 4
 
         ShapePath {
-            strokeColor: root.currentColor; strokeWidth: 10; fillColor: "transparent"; capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
-            startX: 10; startY: root.currentY - root.curveDepth
-            PathQuad { controlX: 40; controlY: root.currentY + root.curveDepth; x: 70; y: root.currentY - root.curveDepth }
+            strokeColor: root.currentColor; strokeWidth: Math.max(1, Math.round(10 * root.localScale)); fillColor: "transparent"; capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
+            startX: Math.round(10 * root.localScale); startY: root.currentY - root.curveDepth
+            PathQuad { controlX: Math.round(40 * root.localScale); controlY: root.currentY + root.curveDepth; x: Math.round(70 * root.localScale); y: root.currentY - root.curveDepth }
         }
         Behavior on anchors.verticalCenterOffset { NumberAnimation { duration: 400; easing.type: Easing.InOutQuad } }
     }

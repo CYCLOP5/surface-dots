@@ -14,6 +14,10 @@ Item {
     height: Screen.height
     focus: true
 
+    readonly property real _minDim: Math.min(Screen.width, Screen.height)
+    readonly property real scaleFactor: Math.max(0.68, Math.min(1.6, _minDim / 900))
+    readonly property bool isWide: (Screen.width / Screen.height) >= 1.55
+
 
     // 1. STATE & CONFIG
 
@@ -211,10 +215,10 @@ Item {
     Text {
         z: 4
         anchors.left: parent.left; anchors.top: parent.top
-        anchors.leftMargin: 60; anchors.topMargin: 60
+        anchors.leftMargin: Math.round(60 * root.scaleFactor); anchors.topMargin: Math.round(60 * root.scaleFactor)
         text: Qt.formatDate(root.now, "dddd, MMMM d")
         color: Qt.rgba(211/255, 198/255, 170/255, 0.62)
-        font.pixelSize: 28
+        font.pixelSize: Math.max(14, Math.round(28 * root.scaleFactor))
         font.weight: Font.Normal
         opacity: root.authOpen ? 0.0 : 1.0
         Behavior on opacity { NumberAnimation { duration: 200 } }
@@ -223,10 +227,10 @@ Item {
     Column {
         z: 4
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: root.authOpen ? -300 : -50
+        anchors.verticalCenterOffset: root.authOpen ? -Math.round(root._minDim * (root.isWide ? 0.28 : 0.12)) : -Math.round(root._minDim * 0.05)
         scale: root.authOpen ? 0.8 : 1.0
         opacity: root.authOpen ? 0.0 : 1.0
-        spacing: -87
+        spacing: Math.round(-87 * root.scaleFactor)
 
         Behavior on anchors.verticalCenterOffset { NumberAnimation { duration: 500; easing.type: Easing.OutExpo } }
         Behavior on scale { NumberAnimation { duration: 500; easing.type: Easing.OutExpo } }
@@ -236,14 +240,14 @@ Item {
             text: Qt.formatTime(root.now, "hh")
             color: root.cPrimary
             font.family: "Inter" 
-            font.pixelSize: 220; font.weight: Font.Medium
+            font.pixelSize: Math.max(72, Math.round(220 * root.scaleFactor)); font.weight: Font.Medium
             anchors.horizontalCenter: parent.horizontalCenter
         }
         Text {
             text: Qt.formatTime(root.now, "mm")
             color: root.cText
             font.family: "Inter"
-            font.pixelSize: 220; font.weight:Font.Medium
+            font.pixelSize: Math.max(72, Math.round(220 * root.scaleFactor)); font.weight:Font.Medium
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }
@@ -255,8 +259,8 @@ Item {
         id: powerPill
         z: 20
         anchors.right: parent.right; anchors.top: parent.top
-        anchors.rightMargin: 40; anchors.topMargin: 40
-        width: 160; height: 44; radius: 22
+        anchors.rightMargin: Math.round(40 * root.scaleFactor); anchors.topMargin: Math.round(40 * root.scaleFactor)
+        width: Math.round(root._minDim * 0.12); height: Math.max(36, Math.round(root._minDim * 0.03)); radius: height/2
         color: Qt.rgba(45/255, 53/255, 59/255, 0.8)
         visible: root.authOpen
         opacity: root.authOpen ? 1.0 : 0.0
@@ -347,17 +351,17 @@ Item {
 
             Item {
                 Layout.alignment: Qt.AlignHCenter
-                width: 160; height: 160
+                width: avatarCircle.avatarSize; height: avatarCircle.avatarSize
                 Rectangle {
                     id: avatarCircle
                     anchors.fill: parent
-                    radius: 80; color: "transparent"
+                    radius: avatarCircle.avatarSize/2; color: "transparent"
                     property int tryIndex: 0; property bool ok: false
                     Image {
                         anchors.fill: parent; fillMode: Image.PreserveAspectCrop
                         source: avatarCandidate(avatarCircle.tryIndex)
                         layer.enabled: true
-                        layer.effect: OpacityMask { maskSource: Rectangle { width: 160; height: 160; radius: 80 } }
+                        layer.effect: OpacityMask { maskSource: Rectangle { width: avatarCircle.avatarSize; height: avatarCircle.avatarSize; radius: avatarCircle.avatarSize/2 } }
                         onStatusChanged: {
                             if (status === Image.Ready) avatarCircle.ok = true;
                             else if (status === Image.Error && avatarCircle.tryIndex < 2) {
@@ -366,7 +370,7 @@ Item {
                         }
                     }
                     Rectangle {
-                        anchors.fill: parent; radius: 80; color: root.cSurfaceVar; visible: !avatarCircle.ok
+                        anchors.fill: parent; radius: avatarCircle.avatarSize/2; color: root.cSurfaceVar; visible: !avatarCircle.ok
                         Text { anchors.centerIn: parent; text: (username().length ? username()[0].toUpperCase() : "?"); color: root.cText; font.pixelSize: 64 }
                     }
                 }
@@ -377,6 +381,10 @@ Item {
                 Text { text: userSelector.currentText; color: root.cText; font.pixelSize: 22; font.bold: true; Layout.alignment: Qt.AlignHCenter }
                 Rectangle {
                     Layout.alignment: Qt.AlignHCenter; implicitWidth: sessionLabel.contentWidth + 24; implicitHeight: 26; radius: 8; color: root.cSurfaceVar
+
+                    // avatar sizing helper for different aspect ratios / DPI
+                    property int avatarSize: Math.max(88, Math.round(root._minDim * 0.14))
+                    Component.onCompleted: avatarCircle.avatarSize = avatarSize
                     Text { id: sessionLabel; anchors.centerIn: parent; text: sessionSelector.currentText; color: root.cMuted; font.pixelSize: 12 }
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -393,7 +401,7 @@ Item {
                 // 8.3.1 INPUT BOX
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 56
+                    Layout.preferredHeight: Math.max(44, Math.round(root._minDim * 0.05))
                     radius: 28
                     color: root.cSurfaceVar
                     clip: true
@@ -456,7 +464,7 @@ Item {
 
         Rectangle {
             anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - 40; height: root.sessionOpen ? 220 : 0
+            width: parent.width - Math.round(40 * root.scaleFactor); height: root.sessionOpen ? Math.max(160, Math.round(root._minDim * 0.20)) : 0
             radius: 16; color: root.cSurfaceVar; clip: true; visible: height > 0
             Behavior on height { NumberAnimation { duration: 200 } }
             
@@ -471,7 +479,7 @@ Item {
                 highlightMoveDuration: 0
 
                 delegate: Item {
-                    width: parent.width; height: 40
+                    width: parent.width; height: Math.max(36, Math.round(root._minDim * 0.035))
                     Rectangle {
                         anchors.fill: parent; radius: 8
                         property bool isHovered: mouseArea.containsMouse; property bool isSelected: ListView.isCurrentItem

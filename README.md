@@ -110,8 +110,8 @@ Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCa
 
 ---
 
-> [!CAUTION]
-> Layout geometry is hardcoded for a 3:2 high-resolution display. Deviation in aspect ratio or pixel density will result in misalignment or things looking too big. Please reconfigure values if you do not have a 3:2 high res display.
+> [!NOTE]
+> The SDDM `pixel` theme previously assumed a 3:2 (Surface) layout. It now includes responsive scaling and layout fixes for common laptop aspect ratios (including 16:9 at 1920×1080). If something still looks off on an unusual display, try the preview/testing steps below or open an issue with a screenshot.
 
 ## Hyprland
 
@@ -373,6 +373,40 @@ Standalone network manager applet located at lib/WifiMenu.qml. With both (light/
 > Note: you cannot connect to enterprise access points yet, I haven't had the time to fix it yet
 
 ## Pixel sddm theme
+
+### Installation (Arch Linux) ✅
+
+- Preview the theme locally (no install):
+
+  ```bash
+  sddm-greeter --test-mode --theme "$(pwd)/sddm/themes/pixel"
+  ```
+
+- Dry-run install (shows actions, does not write):
+
+  ```bash
+  sudo ./install.sh --dry-run
+  ```
+
+- Install (idempotent) and leave SDDM untouched:
+
+  ```bash
+  sudo ./install.sh --enable
+  ```
+
+- Install + enable + restart SDDM (will end current graphical session):
+
+  ```bash
+  sudo ./install.sh --enable --restart
+  ```
+
+Notes:
+- The installer is written to work on bare-metal Arch (uses pacman where relevant and standard system paths).
+- If you have a non-Arch distro, copy the folder into `/usr/share/sddm/themes/pixel` and run `fc-cache -f` after installing fonts.
+
+---
+
+
 
 - Required (I recommend installing `qt5-graphicaleffects qt5-quickcontrols2 qt5-svg` too if it keeps giving error):
 
