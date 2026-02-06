@@ -3,6 +3,14 @@
 Personal dotfiles + UI setup for my **Surface Laptop 4 (AMD)** running **Hyprland**.
 Also, please check my calendar app: [Evercal](https://github.com/snes19xx/EverCal)
 
+## 📦 Installation
+
+Copy and run this one-liner on a fresh Arch install (requires `sudo` access):
+
+```bash
+sudo pacman -S --needed --noconfirm git; git clone https://github.com/snes19xx/surface-dots.git ~/surface-dots; cd ~/surface-dots; chmod +x install.sh; ./install.sh
+```
+
 ---
 
 ## Table of contents
